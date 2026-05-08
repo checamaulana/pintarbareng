@@ -1,0 +1,67 @@
+# Progress PintarBareng
+
+## Session: 2026-05-08
+
+### Phase 1: Project Setup & Foundation — STATUS: ✅ SELESAI (95%)
+
+#### ✅ Selesai:
+1. **Task 1** — Laravel terinstall (sudah dilakukan sebelum sesi ini)
+2. **Task 2** — Inertia.js + React + TypeScript sudah ada
+3. **Task 3** — TailwindCSS 4 sudah ada
+4. **Task 5** — Framer Motion (package `motion` v12) sudah ada
+5. **Task 6** — MySQL database + .env sudah dikonfigurasi (DB pintarbareng)
+6. **Task 7** — Laravel Reverb v1.10 diinstall, config dipublish, .env dikonfigurasi
+7. **Task 8** — Laravel Echo + Pusher JS diinstall, lib/echo.ts dibuat dengan initEcho()
+8. **Task 9** — Fonts Inter + Space Grotesk dari Google Fonts ditambahkan di app.css
+9. **Task 10** — Design tokens lengkap di app.css (warna primary/neutral/gamifikasi, border-radius, CSS vars)
+10. **Task 11** — AppLayout.tsx + GuestLayout.tsx dibuat di Components/layout/
+11. **Task 12** — Navbar.tsx dibuat (responsive, glassmorphism backdrop-blur, dropdown avatar, level badge, nav links aktif)
+12. **Task 13** — Base components dibuat:
+    - Avatar.tsx (deterministik color, multi-size)
+    - EmptyState.tsx (emoji/icon, title, CTA)
+    - StatCard.tsx (multi-accent colors)
+    - PageHeader.tsx (Space Grotesk title + actions slot)
+    - LoadingSkeleton.tsx (shimmer, CardSkeleton, StatSkeleton, UserSkeleton, RoomCardSkeleton)
+13. **Task 14** — TypeScript types di types/models.ts:
+    - User, Room, SessionLog, Feedback, Badge, UserBadge, ActivityLog
+    - LeaderboardEntry, SharedData, PaginatedData
+    - lib/constants.ts: LEVELS, ROOM_CATEGORIES, EXP_REWARDS, dll.
+
+#### ⬜ Pending (Minor):
+- **Task 4** — shadcn/ui setup → akan dikerjakan saat Phase 2 (form inputs, buttons)
+- Test WebSocket server berjalan (php artisan reverb:start)
+
+#### Files Created:
+- resources/css/app.css — Design system lengkap
+- resources/js/lib/utils.ts — Helper functions
+- resources/js/lib/constants.ts — App constants
+- resources/js/lib/echo.ts — Reverb WebSocket init
+- resources/js/types/models.ts — TypeScript models
+- resources/js/types/auth.ts — Auth types (updated)
+- resources/js/types/index.ts — Types re-exports
+- resources/js/Components/layout/AppLayout.tsx
+- resources/js/Components/layout/GuestLayout.tsx
+- resources/js/Components/layout/Navbar.tsx
+- resources/js/Components/shared/Avatar.tsx
+- resources/js/Components/shared/EmptyState.tsx
+- resources/js/Components/shared/StatCard.tsx
+- resources/js/Components/shared/PageHeader.tsx
+- resources/js/Components/shared/LoadingSkeleton.tsx
+- app/Http/Middleware/HandleInertiaRequests.php — Updated (flash messages)
+- vite.config.ts — Updated (path alias @/)
+- .env — Updated (APP_NAME, Reverb config)
+
+---
+
+## Phase 2: Authentication & Onboarding — STATUS: BELUM MULAI
+
+Berikutnya:
+- Migration: tambah kolom ke users table (role, username, bio, skill_tags, avatar_color, exp, level, streak, is_onboarded)
+- Buat Enum UserRole
+- Buat RegisterController + RegisterRequest
+- Buat halaman Register.tsx, Login.tsx, SelectRole.tsx
+- Buat OnboardingController + Setup.tsx
+- Buat middleware EnsureOnboarded
+- Buat StreakService
+- Buat halaman Landing.tsx
+- Test flow: Register → Role → Onboarding → Dashboard
