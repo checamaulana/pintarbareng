@@ -1,5 +1,59 @@
 # Progress PintarBareng
 
+---
+
+## Phase 4: Room System — STATUS: ✅ SELESAI (100%)
+
+### ✅ Backend Tasks Selesai:
+1. **Task 1** — Migration `2026_05_10_000001_create_rooms_table.php`: kolom id, title, description, category, tags (json), status, creator_id (FK), partner_id (FK nullable), timestamps. Migration berhasil dijalankan.
+2. **Task 2** — `app/Models/Room.php`: fillable, casts (tags→array), relasi creator()/partner() belongsTo User, scopeWaiting, isWaiting(), isActive().
+3. **Task 3** — `app/Events/RoomJoined.php`: ShouldBroadcast event, broadcast ke PrivateChannel `room.{id}`, event name `room.joined`, payload berisi room_id, room_status, partner info.
+4. **Task 4** — `app/Services/RoomService.php`: create(), join() (broadcast RoomJoined), cancel(), getAvailableRooms() (filter category + search, paginate 12), getUserActiveRoom().
+5. **Task 5** — `app/Http/Requests/CreateRoomRequest.php`: validasi title, description, category (enum), tags (array max 5), pesan error bahasa Indonesia.
+6. **Task 6** — `app/Http/Controllers/RoomController.php`: index, create, store, show, join, cancel actions. Error handling dengan try/catch RuntimeException.
+7. **Task 7** — `app/Http/Middleware/EnsureRoomParticipant.php`: cek apakah user adalah creator atau partner room, abort(403) jika bukan.
+8. **Task 8** — `routes/channels.php`: tambah channel `room.{roomId}` — auth hanya untuk creator/partner.
+9. **Task 9** — `routes/web.php`: tambah 6 room routes (index, create, store, show, join, cancel) di bawah middleware onboarded.
+10. **Task 10** — `app/Http/Controllers/DashboardController.php`: inject RoomService, ganti $activeRooms placeholder dengan $activeRoom dari getUserActiveRoom(), rename prop `activeRooms` → `activeRoom`.
+
+### Files Created:
+- `database/migrations/2026_05_10_000001_create_rooms_table.php` — NEW
+- `app/Models/Room.php` — NEW
+- `app/Events/RoomJoined.php` — NEW (app/Events/ directory dibuat)
+- `app/Services/RoomService.php` — NEW
+- `app/Http/Requests/CreateRoomRequest.php` — NEW
+- `app/Http/Controllers/RoomController.php` — NEW
+- `app/Http/Middleware/EnsureRoomParticipant.php` — NEW
+- `routes/channels.php` — UPDATED
+- `routes/web.php` — UPDATED
+- `app/Http/Controllers/DashboardController.php` — UPDATED
+
+### ✅ Phase 4 Frontend Components (Selesai):
+- `resources/js/Components/room/RoomCard.tsx` — Glassmorphism card, category+status badges, tags, creator Avatar (xs), timeAgo (date-fns id locale), action buttons (Lihat/Join/Tidak Tersedia), Framer Motion stagger+lift
+- `resources/js/Components/room/RoomFilters.tsx` — Search input (clear button), category chip buttons (Semua + ROOM_CATEGORIES), toggle behavior
+- `resources/js/Components/room/WaitingState.tsx` — 3x animated pulse rings, copy URL clipboard, creator vs partner slot, staggered entrance, Batalkan Room POST
+- `resources/js/Components/shared/Avatar.tsx` — Added `xs` size (w-6 h-6) untuk RoomCard creator display
+
+### ✅ Phase 4 Frontend Pages (Selesai sebagian):
+- `resources/js/pages/Rooms/Create.tsx` ✅ — form buat room: category grid (8 chips), title/desc/tags inputs, char counters, tag pill input (Enter/comma/Backspace), useForm POST /rooms, loading state, error messages
+- `resources/js/pages/Rooms/Index.tsx` ✅ — browse rooms: RoomFilters (search debounce 300ms + category chips), RoomCard grid (1/2/3 col responsive), EmptyState, pagination links, partial reload (only: ['rooms','filters'])
+
+### ✅ Phase 4 Frontend Pages (Selesai):
+- `resources/js/pages/Rooms/Show.tsx` ✅
+  - waiting + isCreator → WaitingState + Echo subscribe room.{id} (.room.joined → router.reload)
+  - active → Partner Ditemukan card dengan Avatar creator vs partner
+  - cancelled/completed → status message + back button
+  - default (partner waiting) → spinner + amber indicator
+- Dashboard.tsx — activeRooms[] → activeRoom: Room|null, RoomCard wired ✅
+
+### Fix Notes:
+- `PageHeader` prop: `subtitle` (not `description`) — adjusted in Create.tsx
+- TypeScript diagnostics: 0 errors, 0 warnings
+- Routes: `php artisan route:list --path=rooms` shows 6 routes correctly
+
+---
+
+
 ## Session: 2026-05-08
 
 ### Phase 1: Project Setup & Foundation — STATUS: ✅ SELESAI (95%)
@@ -53,15 +107,55 @@
 
 ---
 
-## Phase 2: Authentication & Onboarding — STATUS: BELUM MULAI
+## Phase 3: Dashboard — STATUS: ✅ SELESAI (100%)
 
-Berikutnya:
-- Migration: tambah kolom ke users table (role, username, bio, skill_tags, avatar_color, exp, level, streak, is_onboarded)
-- Buat Enum UserRole
-- Buat RegisterController + RegisterRequest
-- Buat halaman Register.tsx, Login.tsx, SelectRole.tsx
-- Buat OnboardingController + Setup.tsx
-- Buat middleware EnsureOnboarded
-- Buat StreakService
-- Buat halaman Landing.tsx
-- Test flow: Register → Role → Onboarding → Dashboard
+### ✅ Tasks Selesai:
+1. **Task 1** — DashboardController diupdate: load recentActivities, allBadges + userBadges (dengan unlocked status), stats (total_sessions, total_exp, streak, level, role)
+2. **Task 2** — Dashboard/Index.tsx (Dashboard.tsx) direfaktor penuh: Framer Motion animations, role-aware copy, AchievementCard wired ke data real
+3. **Task 3** — ExpBar.tsx diupdate: role-aware (LEARNER_LEVELS vs TEACHER_LEVELS), MAX level badge, remaining EXP hint
+4. **Task 4** — LevelBadge.tsx: sudah ada dari Phase 1 ✅
+5. **Task 5** — StreakCounter.tsx: sudah ada dari Phase 1 ✅
+6. **Task 6** — StatCard.tsx: sudah ada dari Phase 1 ✅
+7. **Task 7** — AchievementCard.tsx: sudah ada, sekarang di-wire ke data badges nyata
+8. **Task 8** — Migration + model ActivityLog: sudah ada dari Phase 1. Ditambah: migration badges + user_badges, model Badge + UserBadge, User.userBadges() relationship
+9. **Task 9** — Riwayat aktivitas di dashboard: ✅ (dengan emoji icon map, Framer Motion stagger)
+10. **Task 10** — Room aktif card: placeholder EmptyState, RoomCard akan diisi di Phase 4
+11. **Task 11** — Loading skeletons: LoadingSkeleton.tsx sudah ada dari Phase 1 ✅
+12. **Task 12** — Responsive layout: ✅ (grid 1→2→4 col, lg:col-span-2 sidebar)
+
+### Files Created / Modified:
+- `database/migrations/..._create_badges_table.php` — NEW
+- `database/migrations/..._create_user_badges_table.php` — NEW
+- `app/Models/Badge.php` — NEW
+- `app/Models/UserBadge.php` — NEW
+- `app/Models/User.php` — userBadges() relationship added
+- `database/seeders/BadgeSeeder.php` — NEW (8 badges dari PRD)
+- `database/seeders/DatabaseSeeder.php` — call BadgeSeeder
+- `app/Http/Controllers/DashboardController.php` — load badges + user_badges
+- `resources/js/lib/constants.ts` — LEARNER_LEVELS + TEACHER_LEVELS per PRD, role-aware getLevelInfo/getExpProgress, MAX_LEVEL
+- `resources/js/Components/dashboard/ExpBar.tsx` — role prop, MAX badge, remaining EXP hint
+- `resources/js/Components/shared/EmptyState.tsx` — action accepts {label, href} object OR ReactNode
+- `resources/js/pages/Dashboard.tsx` — full rewrite: Framer Motion, role-aware, AchievementCard wired
+- `resources/js/pages/Onboarding/Setup.tsx` — usePage<SharedData> fix
+- `date-fns` package installed (v4.1.0)
+
+---
+
+## Phase 2: Authentication & Onboarding — STATUS: ✅ SELESAI (100%)
+
+✨ **Update (Session 2): UI Rebuilt with Pro Max Design (Desktop First)**
+- `GuestLayout.tsx` — Ditulis ulang dengan support layout `split` dan `centered`, menggunakan dark theme + glassmorphism.
+- `Welcome.tsx` (Landing) — Hero section, Features, CTA direvamp dengan modern grid, glow effects, floating elements.
+- `Register.tsx` & `Login.tsx` — Menggunakan layout split dengan image/gradient premium di kiri dan form di kanan.
+- `Role.tsx` & `Setup.tsx` — Menggunakan layout centered lebar dengan Framer Motion animations dan micro-interactions.
+
+### ✅ History:
+- Migration: tambah kolom ke users table (role, username, bio, skill_tags, avatar_color, exp, level, streak, is_onboarded) ✅
+- Buat Enum UserRole ✅
+- Buat RegisterController + RegisterRequest ✅
+- Buat halaman Register.tsx, Login.tsx, Role.tsx ✅
+- Buat OnboardingController + Setup.tsx ✅
+- Buat middleware EnsureOnboarded ✅
+- Buat StreakService ✅
+- Buat halaman Welcome.tsx (Landing) ✅
+- Test flow: Register → Role → Onboarding → Dashboard ✅

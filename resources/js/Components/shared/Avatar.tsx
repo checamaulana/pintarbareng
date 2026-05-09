@@ -5,11 +5,12 @@ import type { User } from '@/types';
 
 interface AvatarProps {
     user: Pick<User, 'id' | 'name' | 'avatar_color'>;
-    size?: 'sm' | 'md' | 'lg' | 'xl';
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     className?: string;
 }
 
 const SIZE_MAP = {
+    xs: 'w-6 h-6 text-[10px]',
     sm: 'w-8 h-8 text-xs',
     md: 'w-10 h-10 text-sm',
     lg: 'w-14 h-14 text-base',
@@ -24,7 +25,7 @@ export function Avatar({ user, size = 'md', className }: AvatarProps) {
     return (
         <div
             className={cn(
-                'inline-flex items-center justify-center rounded-full font-semibold text-white ring-2 ring-white shadow-sm select-none shrink-0',
+                'inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-white shadow-sm ring-2 ring-white select-none',
                 sizeClass,
                 className,
             )}
